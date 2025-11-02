@@ -1,0 +1,24 @@
+{
+  "name": "get_props",
+  "description": "Fetches live NFL player props for a specific player, team, or date.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "player": {
+        "type": "string",
+        "description": "Name of the NFL player (e.g., Tyreek Hill)"
+      },
+      "team": {
+        "type": "string",
+        "description": "Team abbreviation (e.g., KC, DAL)"
+      },
+      "date": {
+        "type": "string",
+        "format": "date",
+        "description": "Date of the game in YYYY-MM-DD"
+      }
+    },
+    "required": []
+  },
+  "url": "https://your-app-name.onrender.com/props"
+}

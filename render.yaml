@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: live-prop-api-server
+    env: node
+    plan: free
+    buildCommand: "npm install"
+    startCommand: "node index.js"
+    envVars:
+      - key: API_KEY
+        value: your_api_key_here
+    region: oregon
