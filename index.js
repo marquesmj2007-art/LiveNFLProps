@@ -1,51 +1,29 @@
-const express = require('express');
-const axios = require('axios');
+const express = require("express");
+const axios = require("axios");
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 10000;
 
-const API_KEY = process.env.API_KEY;
-const ODDS_API_URL = 'https://api.the-odds-api.com/v4/sports/americanfootball_nfl/odds';
+app.get("/", (req, res) => {
+  res.send("🚀 Live Prop API is working!");
+});
 
-app.get('/props', async (req, res) => {
-  const { player, team, date } = req.query;
+app.get("/props", async (req, res) => {
+  const url = "https://api.the-odds-api.com/v4/sports/americanfootball_nfl/odds";
+  const params = {
+    regions: "us",
+    markets: "player_pass_tds,player_pass_yds,player_receptions,player_rush_yds",
+    apiKey: process.env.API_KEY,
+  };
+
   try {
-    const response = await axios.get(ODDS_API_URL, {
-      params: {
-        apiKey: API_KEY,
-        regions: 'us',
-        markets: 'player_props',
-        oddsFormat: 'american'
-      }
-    });
-
-    const formatted = [];
-    for (const game of response.data) {
-      for (const bookmaker of game.bookmakers || []) {
-        for (const market of bookmaker.markets || []) {
-          for (const outcome of market.outcomes || []) {
-            if (
-              (!player || outcome.name.toLowerCase().includes(player.toLowerCase())) &&
-              (!team || game.home_team.toLowerCase().includes(team.toLowerCase()) || game.away_team.toLowerCase().includes(team.toLowerCase()))
-            ) {
-              formatted.push({
-                player: outcome.name,
-                prop_type: market.key,
-                line: outcome.point,
-                odds: outcome.price,
-                team: `${game.home_team} vs ${game.away_team}`,
-                game_time: game.commence_time
-              });
-            }
-          }
-        }
-      }
-    }
-
-    res.json(formatted);
-  } catch (err) {
-    console.error('Error fetching props:', err.message);
-    res.status(500).json({ error: 'Error fetching props' });
+    const response = await axios.get(url, { params });
+    res.json(response.data);
+  } catch (error) {
+    console.error("Error fetching props:", error);
+    res.status(500).json({ error: "Failed to fetch props" });
   }
 });
 
-app.listen(PORT, () => console.log(`Prop API server running on port ${PORT}`));
+app.listen(PORT, () => {
+  console.log(`Prop API server running on port ${PORT}`);
+});
